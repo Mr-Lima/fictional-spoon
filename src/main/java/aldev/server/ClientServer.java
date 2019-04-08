@@ -1,18 +1,22 @@
 package aldev.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ClientServer extends Thread {
+import aldev.pagkages.Name;
+
+public class ClientServer implements Runnable {
 
   private Socket client;
   private String textRequest;
-  private String textResponse;
+  private Name processed;
+  private Name tiny;
 
-  public ClientServer(Socket client) {
+  public ClientServer(Socket client, Name tiny) {
     this.client = client;
+    this.tiny = tiny;
     if (this.client.isConnected())
       System.out.println("CLIENTE CONECTADO" + this.client.getInetAddress().getHostAddress());
     else
@@ -21,16 +25,33 @@ public class ClientServer extends Thread {
 
   public void run() {
     try {
-      System.out.println(this.client.getInputStream());
-      BufferedReader in = new BufferedReader(new InputStreamReader(this.client.getInputStream()));
+      ObjectOutputStream os = new ObjectOutputStream(this.client.getOutputStream());
+      ObjectInputStream is = new ObjectInputStream(this.client.getInputStream());
 
-      String line;
-      System.out.println(in.readLine());
-      // while (1 == 1) {
-      // System.out.println(in.readLine());
-      // }
+      // FIXME: thread para esperar resposta processada
+      new Thread() {
+        @Override
+        public void run() {
+          try {
+            while (true) {
+              // this.getPro = new Object();
+            }
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      }.start();
+
+      os.writeObject(this.tiny);
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  /**
+   * @return the processed
+   */
+  public Name getProcessed() {
+    return processed;
   }
 }
