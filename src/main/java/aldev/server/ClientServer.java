@@ -10,13 +10,11 @@ import aldev.pagkages.Name;
 public class ClientServer implements Runnable {
 
   private Socket client;
-  private String textRequest;
-  private Name processed;
-  private Name tiny;
+  private ObjectOutputStream os;
+  private ObjectInputStream is;
 
-  public ClientServer(Socket client, Name tiny) {
+  public ClientServer(Socket client) {
     this.client = client;
-    this.tiny = tiny;
     if (this.client.isConnected())
       System.out.println("CLIENTE CONECTADO" + this.client.getInetAddress().getHostAddress());
     else
@@ -25,25 +23,18 @@ public class ClientServer implements Runnable {
 
   public void run() {
     try {
-      ObjectOutputStream os = new ObjectOutputStream(this.client.getOutputStream());
-      ObjectInputStream is = new ObjectInputStream(this.client.getInputStream());
-
       // FIXME: thread para esperar resposta processada
-      new Thread() {
-        @Override
-        public void run() {
-          try {
-            while (true) {
-              // this.getPro = new Object();
-            }
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      }.start();
 
       os.writeObject(this.tiny);
+
+      while (this.processed == null) {
+        this.processed = (Name) is.readObject();
+      }
+      this.client.close();
     } catch (IOException e) {
+      e.printStackTrace();
+    } catch (ClassNotFoundException e) {
+      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

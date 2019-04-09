@@ -13,8 +13,9 @@ public class App {
         Name[] names = n1.split(5);
         System.out.println(names.toString());
 
-        Server server = new Server(3000, names);
+        Server server = new Server(3000);
 
-        server.run();
+        server.start();
+        server.receiveTask();
     }
 }
